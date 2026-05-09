@@ -1,0 +1,110 @@
+# sf-org-setup
+
+One-command Salesforce org setup for Tableau Next demos. Enables Data Cloud, Einstein, Tableau Next, deploys permission sets, creates the Analytics and Visualization agent, and configures optional features (Heroku connector, custom agents, Tableau embedding trust).
+
+## Prerequisites
+
+- [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) (`sf`)
+- PowerShell 5.1+ (Windows) or PowerShell 7+ (macOS/Linux)
+- Python 3 + Playwright (optional — only needed for headless Feature Manager automation)
+
+## Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/Sanpelegrino/sf-org-setup.git
+cd sf-org-setup
+```
+
+### 2. Authenticate to your Salesforce org
+
+```bash
+sf org login web --alias MY-ORG
+```
+
+This opens a browser window. Log in with admin credentials, then return to your terminal.
+
+### 3. Run the setup script
+
+**Windows (PowerShell — already built in):**
+
+```powershell
+.\scripts\salesforce\org-setup\run-setup.ps1 -Alias MY-ORG
+```
+
+**macOS / Linux (requires PowerShell 7+):**
+
+```bash
+# Install PowerShell if you haven't already
+# macOS:  brew install powershell/tap/powershell
+# Linux:  https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux
+
+pwsh ./scripts/salesforce/org-setup/run-setup.ps1 -Alias MY-ORG
+```
+
+### 4. Wait for Data Cloud (if needed)
+
+If Data Cloud is still provisioning (common on new orgs — takes 5–30 min), the script exits cleanly. All completed steps are saved. When Data Cloud is ready, just rerun the same command and it picks up where it left off.
+
+---
+
+## Interactive Decisions
+
+The script will ask you about three optional features at the start. Here's what each one does so you can decide ahead of time:
+
+| Prompt | What it does | When to say Yes |
+|--------|--------------|-----------------|
+| **Set up Heroku connector?** | Adds a shared PostgreSQL database (from the PACE ICE curriculum) into Data Cloud as an external data connector. Gives you sample data to query immediately. | You want demo data in Data Cloud without uploading CSVs. |
+| **Deploy Reckless Analyst agent?** | Deploys a custom analytics sidebar agent with faster responses, fewer guardrails, and no inline chart generation. Runs alongside the default Analytics and Visualization agent. | You want to demo or test a second agent with different behavior. |
+| **Set up Tableau embedding for PACE and PACE-NEXUS?** | Registers your Salesforce org as a trusted identity provider on both Tableau Cloud sites so embedded dashboards authenticate automatically. Also adds your user to both sites. Requires a Tableau Personal Access Token (PAT). | You're embedding Tableau dashboards in Salesforce and need SSO working. |
+
+If you're unsure, say **N** to all three — the core setup (Data Cloud, Einstein, Tableau Next, permissions, default agent) runs regardless.
+
+---
+
+## Flags
+
+| Flag | Effect |
+|------|--------|
+| `-Alias <name>` | SF CLI alias for the target org. If omitted, the script shows a picker. |
+| `-NoConnectedApp` | Skip deploying the CommandCenterAuth connected app. |
+| `-PacePatName` / `-PacePatSecret` | Supply Tableau PAT non-interactively (skips the prompt). |
+
+---
+
+## What the Script Does (in order)
+
+1. Enables Data Cloud
+2. Enables Einstein / Generative AI
+3. Deploys `Access_Analytics_Agent` permission set
+4. Deploys CommandCenterAuth connected app (unless `-NoConnectedApp`)
+5. **— waits for Data Cloud to finish provisioning —**
+6. Deploys `Tableau_Next_Admin_PSG` permission set group
+7. Assigns the PSG to your user
+8. Enables Tableau Next + Agentforce toggles
+9. Flips Feature Manager flags (headless browser or manual)
+10. Enables SLDS v2 dark mode
+11. Creates + activates the Analytics and Visualization agent
+12. Grants agent access via permission set
+13. Registers Tableau Cloud sites
+14. *(optional)* Heroku connector
+15. *(optional)* Reckless Analyst agent
+16. *(optional)* PACE/PACE-NEXUS Tableau trust
+
+---
+
+## Structure
+
+```
+scripts/
+  common/                      Shared PowerShell utilities
+  salesforce/org-setup/        Step scripts + orchestrator
+    lib/                       Helpers (API, state, HTML report, Playwright)
+salesforce/
+  force-app/                   Metadata deployed to the org
+  specs/                       Agent specification YAML files
+notes/
+  org-setup-state/             Per-org state (gitignored, tracks progress)
+  registries/                  Org registry (connected app client IDs)
+```

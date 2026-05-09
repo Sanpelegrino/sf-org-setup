@@ -1,0 +1,14 @@
+# State files (per-org, generated at runtime)
+notes/org-setup-state/*.json
+notes/org-setup-state/*.html
+!notes/org-setup-state/.gitkeep
+
+# Environment files
+.env
+.env.local
+
+# Debug artifacts
+scripts/salesforce/org-setup/lib/feature_manager_debug/
+
+# Temp staging dirs
+tmp/
