@@ -1,6 +1,6 @@
-# OrgSetup step (n) -- deploy and activate the Reckless Analyst (Employee) agent.
+# OrgSetup step (n) -- deploy and activate the Custom Analytics Agent (Employee Agent).
 #
-# Opt-in only. Run via run-setup.ps1 -MakeAgent, or standalone.
+# Opt-in only. Run via run-setup.ps1 -CreateCustomAgent, or standalone.
 #
 # Uses the authoring-bundle publish path (sf agent generate authoring-bundle ->
 # sf agent publish authoring-bundle) which is the only CLI path that produces
@@ -28,7 +28,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'lib\OrgSetup.Common.ps1')
 
 Write-Host ''
-Write-Host '--- [n] Deploy Reckless Analyst Employee agent ---'
+Write-Host '--- [n] Deploy Custom Analytics Agent ---'
 
 $sf  = Get-RequiredCommandPath -Name 'sf' -Hint 'Install Salesforce CLI.'
 $auth = Get-OrgSetupAuth -Alias $Alias
@@ -37,7 +37,7 @@ $api  = Get-OrgSetupApiVersion
 $salesforceRoot = Resolve-CommandCenterPath 'salesforce'
 
 # ── 1. Publish authoring bundle ──────────────────────────────────────────────
-Write-Host '  Checking for existing Reckless_Analyst_Employee agent...'
+Write-Host '  Checking for existing Custom Analytics Agent (Reckless_Analyst_Employee)...'
 
 $existing = $null
 try {
@@ -168,7 +168,7 @@ if ($existingAccess -and $existingAccess.records -and $existingAccess.records.Co
     $isErr = $false
     try { $isErr = [bool]$result._error } catch {}
     if ($isErr) {
-        $warnAccess = 'SetupEntityAccess insert failed. Grant manually: Setup > Permission Sets > Reckless_Analyst_Access > Agent Access > Edit > select Reckless Analyst > Save.'
+        $warnAccess = 'SetupEntityAccess insert failed. Grant manually: Setup > Permission Sets > Reckless_Analyst_Access > Agent Access > Edit > select Custom Analytics Agent > Save.'
         Add-OrgSetupWarning -Alias $Alias -Step 'n-reckless-analyst' -Message $warnAccess
         Add-OrgSetupLogEntry -Alias $Alias -Step 'n-reckless-analyst' -Outcome 'skipped' `
             -Message 'SetupEntityAccess insert failed; see warning.'
@@ -205,6 +205,6 @@ if ($existingPsAssign -and $existingPsAssign.records -and $existingPsAssign.reco
 }
 
 Add-OrgSetupLogEntry -Alias $Alias -Step 'n-reckless-analyst' -Outcome 'completed' `
-    -Message 'Reckless Analyst agent deployed, activated, access granted, and permset assigned.'
-Write-Host '  Reckless Analyst agent ready. It will appear in the Concierge sidebar dropdown.' -ForegroundColor Green
+    -Message 'Custom Analytics Agent deployed, activated, access granted, and permset assigned.'
+Write-Host '  Custom Analytics Agent ready. It will appear in the Concierge sidebar dropdown.' -ForegroundColor Green
 Write-Host '  [n] Done.' -ForegroundColor Green

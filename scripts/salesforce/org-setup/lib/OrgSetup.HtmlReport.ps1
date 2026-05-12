@@ -47,7 +47,7 @@ function Write-OrgSetupHtmlReport {
         'k-create-agent'          = @{ Icon = '&#129470;'; Title = 'Agentforce Agent Created';      Desc = 'Created and activated the Analytics and Visualization Agentforce agent.' }
         'l-grant-agent-access'    = @{ Icon = '&#128275;'; Title = 'Agent Access Granted';          Desc = 'Wired the Access Analytics Agent permission set to the Agentforce agent via SetupEntityAccess.' }
         'm-heroku-connector'      = @{ Icon = '&#128024;'; Title = 'Heroku Connector Created';      Desc = 'Created the Heroku PostgreSQL external data connector in Data Cloud.' }
-        'n-reckless-analyst'      = @{ Icon = '&#129514;'; Title = 'Reckless Analyst Deployed';     Desc = 'Deployed and activated the Reckless Analyst Employee sidebar agent.' }
+        'n-reckless-analyst'      = @{ Icon = '&#129514;'; Title = 'Custom Analytics Agent Deployed'; Desc = 'Deployed and activated the Custom Analytics Agent (Employee sidebar agent).' }
         'o-tableau-sites'         = @{ Icon = '&#128506;'; Title = 'Tableau Sites Registered';      Desc = 'Registered PACE and PACE-NEXUS Tableau Cloud sites via TableauHostMapping (Salesforce side).' }
         'p-pace-trust'            = @{ Icon = '&#128202;'; Title = 'PACE Tableau Trust Configured';  Desc = 'Registered this org as a trusted identity provider on PACE and PACE-NEXUS; org user added to both sites.' }
         'extra-connected-app'     = @{ Icon = '&#128268;'; Title = 'Connected App Deployed';        Desc = 'Deployed the Command Center Connected App for Data Cloud authentication.' }

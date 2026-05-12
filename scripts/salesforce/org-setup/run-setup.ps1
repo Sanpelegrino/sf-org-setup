@@ -20,16 +20,18 @@
 #   (l)   Grant Access_Analytics_Agent -> agent access
 #   (o)   Register Tableau Cloud sites (Salesforce side)
 #   [opt] Heroku PostgreSQL connector (interactive)
-#   [opt] Reckless Analyst Employee agent (interactive)
+#   [opt] Custom Analytics Agent (flag-gated: -CreateCustomAgent)
 #   [opt] PACE / PACE-NEXUS Tableau trust + user (interactive, PAT-prompted)
 #
 # Inputs:
-#   -Alias            (optional) -- SF CLI alias; prompts to pick/login if omitted
-#   -NoConnectedApp   (optional) -- skip CommandCenterAuth connected app deploy
+#   -Alias              (optional) -- SF CLI alias; prompts to pick/login if omitted
+#   -NoConnectedApp     (optional) -- skip CommandCenterAuth connected app deploy
+#   -CreateCustomAgent  (optional) -- deploy the Custom Analytics Agent (Employee Agent)
 
 param(
     [string]$Alias = '',
     [switch]$NoConnectedApp,
+    [switch]$CreateCustomAgent,
     [string]$PacePatName   = '',
     [string]$PacePatSecret = ''
 )
@@ -139,17 +141,13 @@ if ($alreadyDone -contains 'm-heroku-connector') {
     Write-Host ''
 }
 
-# Reckless Analyst agent
+# Custom Analytics Agent (flag-gated, not interactive)
 $doAgent = $false
 if ($alreadyDone -contains 'n-reckless-analyst') {
-    Write-Host '  [Reckless Analyst]  Already deployed.' -ForegroundColor Cyan
-} else {
-    Write-Host '  Reckless Analyst Agent: A custom analytics sidebar agent with faster'
-    Write-Host '  responses, fewer guardrails, and no inline chart generation -- runs'
-    Write-Host '  alongside the default Analytics and Visualization agent.' -ForegroundColor DarkGray
-    $ans = Read-Host '  Deploy Reckless Analyst agent? (y/N)'
-    $doAgent = $ans -match '^[Yy]'
-    Write-Host ''
+    Write-Host '  [Custom Analytics Agent]  Already deployed.' -ForegroundColor Cyan
+} elseif ($CreateCustomAgent) {
+    Write-Host '  [Custom Analytics Agent]  Will deploy (flag -CreateCustomAgent passed).' -ForegroundColor DarkGray
+    $doAgent = $true
 }
 
 # PACE / PACE-NEXUS Tableau trust
@@ -247,6 +245,7 @@ if (-not $dcReady) {
 
     $rerunCmd = 'powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-setup.ps1 -Alias ' + $Alias
     if ($NoConnectedApp) { $rerunCmd += ' -NoConnectedApp' }
+    if ($CreateCustomAgent) { $rerunCmd += ' -CreateCustomAgent' }
     Write-Host "    $rerunCmd" -ForegroundColor White
     Write-Host ''
     Write-Host '  You can check Data Cloud status in Setup > Data Cloud Setup > Home.' -ForegroundColor Yellow

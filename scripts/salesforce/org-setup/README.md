@@ -37,11 +37,11 @@ powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-resume
 # Phase 2 with the optional Heroku PostgreSQL connector
 powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-resume.ps1 -Alias MFG-Nexus -WithHeroku
 
-# Phase 2 with the Reckless Analyst custom Employee agent (Concierge sidebar)
-powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-resume.ps1 -Alias MFG-Nexus -WithRecklessAgent
+# With the "Reckless Analyst" Employee Agent (opt-in, not part of default setup)
+powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-setup.ps1 -Alias MFG-Nexus -CreateCustomAgent
 
 # All optional flags together
-powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-resume.ps1 -Alias MFG-Nexus -WithHeroku -WithRecklessAgent
+powershell -ExecutionPolicy Bypass -File scripts/salesforce/org-setup/run-setup.ps1 -Alias MFG-Nexus -CreateCustomAgent -WithHeroku
 
 ```
 
@@ -63,7 +63,7 @@ Dark mode is always enabled at the org level by `run-resume.ps1`; the run summar
 | l     | `09-grant-agent-access.ps1`           | Tooling `SetupEntityAccess` insert |
 | m     | `10-create-heroku-connector.ps1`      | POST `/services/data/v60.0/ssot/external-data-connectors` (opt-in via `-WithHeroku`) |
 | extra | `11-deploy-connected-app.ps1`         | Deploy CommandCenterAuth external client app (opt-in via `-WithConnectedApp` on kickoff). Not a BUILD 1 step — adds Data Cloud publish auth. See playbooks/set-up-command-center-connected-app.md. |
-| n     | `13-deploy-reckless-analyst-agent.ps1` | Publish `Reckless_Analyst_Employee` via authoring-bundle path, deploy + assign `Reckless_Analyst_Access` permset, wire `SetupEntityAccess`. Opt-in via `-WithRecklessAgent`. Produces an `InternalCopilot` agent visible in the Concierge sidebar dropdown. Not installed by default — only for orgs where the custom analytics agent experience is desired. |
+| n     | `13-deploy-reckless-analyst-agent.ps1` | **Opt-in only** (`-CreateCustomAgent` flag). Deploys the "Reckless Analyst" Employee Agent via the authoring-bundle publish path, deploys + assigns `Reckless_Analyst_Access` permset, wires `SetupEntityAccess`. Produces an `InternalCopilot` agent visible in the Concierge sidebar dropdown. Not part of the default setup — only for orgs where this agent experience is desired. |
 | o     | `14-register-tableau-sites.ps1`        | Registers the PACE and PACE-NEXUS Tableau Cloud sites via `TableauHostMapping` REST inserts (`SiteLuid` + `UrlMatch` + `HostType`). Salesforce-side only. Always emits a warning that Tableau-side Direct Trust setup (registering this org as a trusted issuer on each site's Connected App) is manual and requires Tableau admin credentials — not automated here because this script is shared and can't embed a PAT. |
 
 ## Warnings + summary
