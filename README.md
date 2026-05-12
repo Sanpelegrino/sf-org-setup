@@ -4,54 +4,49 @@ One-command Salesforce org setup for Tableau Next demos. Enables Data Cloud, Ein
 
 ## Prerequisites
 
-- [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) (`sf`)
-- PowerShell 5.1+ (Windows) or PowerShell 7+ (macOS/Linux)
-- Python 3 + Playwright (optional — only needed for headless Feature Manager automation)
+- Windows 10/11 (PowerShell is built in)
+- Internet connection (the script installs Salesforce CLI for you if needed)
+
+**macOS/Linux:** Requires [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) and [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) installed manually.
 
 ## Getting Started
 
-### 1. Clone the repo
+### 1. Download the repo
+
+Click the green **Code** button on GitHub > **Download ZIP**. Extract it anywhere.
+
+Or if you have git:
 
 ```bash
 git clone https://github.com/Sanpelegrino/sf-org-setup.git
-cd sf-org-setup
 ```
 
-### 2. Authenticate to your Salesforce org
+### 2. Double-click Setup.bat
+
+Open the extracted folder and double-click **`Setup.bat`**. It will:
+
+1. Check for Salesforce CLI — if missing, offers to install it automatically via `winget`
+2. Launch the setup script
+3. Prompt you to pick or log in to your Salesforce org (opens a browser)
+4. Run through all setup steps automatically
+
+That's it. Follow the prompts in the window.
+
+**macOS / Linux:**
 
 ```bash
-sf org login web --alias MY-ORG
+pwsh ./scripts/salesforce/org-setup/run-setup.ps1
 ```
 
-This opens a browser window. Log in with admin credentials, then return to your terminal.
+### 3. Wait for Data Cloud (if needed)
 
-### 3. Run the setup script
-
-**Windows (PowerShell — already built in):**
-
-```powershell
-.\scripts\salesforce\org-setup\run-setup.ps1 -Alias MY-ORG
-```
-
-**macOS / Linux (requires PowerShell 7+):**
-
-```bash
-# Install PowerShell if you haven't already
-# macOS:  brew install powershell/tap/powershell
-# Linux:  https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux
-
-pwsh ./scripts/salesforce/org-setup/run-setup.ps1 -Alias MY-ORG
-```
-
-### 4. Wait for Data Cloud (if needed)
-
-If Data Cloud is still provisioning (common on new orgs — takes 5–30 min), the script exits cleanly. All completed steps are saved. When Data Cloud is ready, just rerun the same command and it picks up where it left off.
+If Data Cloud is still provisioning (common on new orgs — takes 5–30 min), the script exits cleanly. All completed steps are saved. Double-click `Setup.bat` again and it picks up where it left off.
 
 ---
 
 ## Interactive Decisions
 
-The script will ask you about two optional features at the start. Here's what each one does so you can decide ahead of time:
+The script will ask you about two optional features during setup:
 
 | Prompt | What it does | When to say Yes |
 |--------|--------------|-----------------|
@@ -71,6 +66,8 @@ The "Reckless Analyst" is a custom Employee Agent with faster responses, fewer g
 ---
 
 ## Flags
+
+These are for advanced/CLI usage. `Setup.bat` handles the defaults.
 
 | Flag | Effect |
 |------|--------|
@@ -105,14 +102,15 @@ The "Reckless Analyst" is a custom Employee Agent with faster responses, fewer g
 ## Structure
 
 ```
+Setup.bat                          Double-click to run (Windows)
 scripts/
-  common/                      Shared PowerShell utilities
-  salesforce/org-setup/        Step scripts + orchestrator
-    lib/                       Helpers (API, state, HTML report, Playwright)
+  common/                          Shared PowerShell utilities
+  salesforce/org-setup/            Step scripts + orchestrator
+    lib/                           Helpers (API, state, HTML report, Playwright)
 salesforce/
-  force-app/                   Metadata deployed to the org
-  specs/                       Agent specification YAML files
+  force-app/                       Metadata deployed to the org
+  specs/                           Agent specification YAML files
 notes/
-  org-setup-state/             Per-org state (gitignored, tracks progress)
-  registries/                  Org registry (connected app client IDs)
+  org-setup-state/                 Per-org state (gitignored, tracks progress)
+  registries/                      Org registry (connected app client IDs)
 ```
