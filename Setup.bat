@@ -11,22 +11,20 @@ where powershell >nul 2>&1
 if %errorlevel% neq 0 (
     echo  ERROR: PowerShell is not installed.
     echo  This should not happen on Windows 10/11.
-    pause
-    exit /b 1
+    goto :done
 )
 
 :: Check for Salesforce CLI
 where sf >nul 2>&1
 if %errorlevel% neq 0 (
-    echo  Salesforce CLI (sf) is not installed.
+    echo  Salesforce CLI [sf] is not installed.
     echo.
-    choice /C YN /M "  Install it now via winget?"
-    if errorlevel 2 (
+    set /p INSTALL_SF="  Install it now via winget? (Y/N): "
+    if /i not "%INSTALL_SF%"=="Y" (
         echo.
         echo  Cannot continue without Salesforce CLI.
         echo  Install manually: https://developer.salesforce.com/tools/salesforcecli
-        pause
-        exit /b 1
+        goto :done
     )
     echo.
     echo  Installing Salesforce CLI...
@@ -34,17 +32,23 @@ if %errorlevel% neq 0 (
     if %errorlevel% neq 0 (
         echo.
         echo  ERROR: Install failed. Try manually: https://developer.salesforce.com/tools/salesforcecli
-        pause
-        exit /b 1
+        goto :done
     )
     echo.
-    echo  Installed. You may need to close and reopen this window for "sf" to be on PATH.
-    echo  Re-run Setup.bat after reopening.
-    pause
-    exit /b 0
+    echo  Installed successfully.
+    echo  Please close this window and double-click Setup.bat again.
+    goto :done
 )
 
-:: Run the setup script
-powershell -ExecutionPolicy Bypass -File "%~dp0scripts\salesforce\org-setup\run-setup.ps1"
+echo  Found: PowerShell, Salesforce CLI
 echo.
-pause
+
+:: Run the setup script
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\salesforce\org-setup\run-setup.ps1"
+
+:done
+echo.
+echo  ============================================
+echo   Press any key to close this window.
+echo  ============================================
+pause >nul
