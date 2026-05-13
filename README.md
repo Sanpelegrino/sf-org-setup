@@ -4,10 +4,9 @@ One-command Salesforce org setup for Tableau Next demos. Enables Data Cloud, Ein
 
 ## Prerequisites
 
-- Windows 10/11 (PowerShell is built in)
-- Internet connection (the script installs Salesforce CLI for you if needed)
-
-**macOS/Linux:** Requires [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) and [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) installed manually.
+- Internet connection (the launcher installs dependencies for you if needed)
+- **Windows:** Nothing else — PowerShell is built in
+- **macOS:** Nothing else — the launcher installs Homebrew, PowerShell, and Salesforce CLI if missing
 
 ## Getting Started
 
@@ -21,26 +20,25 @@ Or if you have git:
 git clone https://github.com/Sanpelegrino/sf-org-setup.git
 ```
 
-### 2. Double-click Setup.bat
+### 2. Double-click the launcher
 
-Open the extracted folder and double-click **`Setup.bat`**. It will:
+| Platform | File |
+|----------|------|
+| Windows  | **`Setup.bat`** |
+| macOS    | **`Setup.command`** |
 
-1. Check for Salesforce CLI — if missing, offers to install it automatically via `winget`
+It will:
+
+1. Check for dependencies and offer to install anything missing
 2. Launch the setup script
 3. Prompt you to pick or log in to your Salesforce org (opens a browser)
 4. Run through all setup steps automatically
 
 That's it. Follow the prompts in the window.
 
-**macOS / Linux:**
-
-```bash
-pwsh ./scripts/salesforce/org-setup/run-setup.ps1
-```
-
 ### 3. Wait for Data Cloud (if needed)
 
-If Data Cloud is still provisioning (common on new orgs — takes 5–30 min), the script exits cleanly. All completed steps are saved. Double-click `Setup.bat` again and it picks up where it left off.
+If Data Cloud is still provisioning (common on new orgs — takes 5–30 min), the script exits cleanly. All completed steps are saved. Double-click the launcher again and it picks up where it left off.
 
 ---
 
@@ -67,7 +65,7 @@ The "Reckless Analyst" is a custom Employee Agent with faster responses, fewer g
 
 ## Flags
 
-These are for advanced/CLI usage. `Setup.bat` handles the defaults.
+These are for advanced/CLI usage. The launcher handles the defaults.
 
 | Flag | Effect |
 |------|--------|
@@ -103,6 +101,7 @@ These are for advanced/CLI usage. `Setup.bat` handles the defaults.
 
 ```
 Setup.bat                          Double-click to run (Windows)
+Setup.command                      Double-click to run (macOS)
 scripts/
   common/                          Shared PowerShell utilities
   salesforce/org-setup/            Step scripts + orchestrator
